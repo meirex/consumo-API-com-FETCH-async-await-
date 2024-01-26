@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fotos de Cachorros</title>
+  <style>
+    #loading {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <button onclick="loadRandomDogPhoto()">Foto de Cachorro</button>
+  <div id="loading">Carregando...</div>
+  <div id="error"></div>
+  <img id="dogPhoto" src="" alt="Foto de Cachorro">
+  
+  <script>
+    async function fetchData(url) {
+      try {
+        const response = await fetch(url);
+
+        if (!response.ok) {
+          throw new Error(`Erro na solicitação: ${response.status} - ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        return data;
+      } catch (error) {
+        throw new Error(`Erro na solicitação: ${error.message}`);
+      }
+    }
+
+    async function loadRandomDogPhoto() {
+      const loadingIndicator = document.getElementById('loading');
+      const errorDiv = document.getElementById('error');
+      const dogPhoto = document.getElementById('dogPhoto');
+
+      loadingIndicator.style.display = 'block';
+      errorDiv.innerHTML = '';
+
+      try {
+        const result = await fetchData('https://dog.ceo/api/breeds/image/random');
+        const imageUrl = result.message;
+
+        dogPhoto.src = imageUrl;
+      } catch (error) {
+        errorDiv.innerHTML = `Erro ao carregar foto: ${error.message}`;
+      } finally {
+        loadingIndicator.style.display = 'none';
+      }
+    }
+  </script>
+</body>
+</html>
